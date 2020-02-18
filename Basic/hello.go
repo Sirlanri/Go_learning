@@ -2,7 +2,7 @@ package main
 
 import "fmt"
 
-func main() {
+func test() {
 	fmt.Println("hello matherfucker")
 	var i int = 1
 	x, y := 2, 3
