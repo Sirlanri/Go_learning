@@ -20,6 +20,7 @@ func main() {
 
 	Get(db)
 	Gets(db)
+	Insert(db)
 }
 
 func Get(db *sql.DB) {
@@ -54,7 +55,7 @@ func Gets(db *sql.DB) {
 		}
 		users = append(users, u)
 	}
-	err = rows.Err()
+	err := rows.Err()
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -62,4 +63,13 @@ func Gets(db *sql.DB) {
 		fmt.Println(item.id, item.username, item.number)
 
 	}
+}
+
+func Insert(db *sql.DB) {
+	result, err := db.Exec(`INSERT INTO first (id,name,num) VALUES(?,?,?)`, 4, "新四", 130)
+	if err != nil {
+		println(result, err)
+	}
+	fmt.Println("插入完毕")
+
 }
