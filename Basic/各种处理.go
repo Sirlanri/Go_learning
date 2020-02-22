@@ -7,6 +7,7 @@ import (
 )
 
 func jsondef() {
+	//这是官方做法，很简单方便
 	type User struct {
 		Firstname string `json:"firstname"`
 		Lastname  string `json:"lastname"`
@@ -50,7 +51,7 @@ func jsondef2() {
 func jsondef3() {
 	b := []byte(`{"Name":"Wednesday","Age":6,"Parents":["Gomez","Morticia"]}`)
 	var f interface{}
-	_ := json.Unmarshal(b, &f)
+	_ = json.Unmarshal(b, &f)
 	f = map[string]interface{}{
 		"Name": "Wednesday",
 		"Age":  6,
@@ -61,24 +62,25 @@ func jsondef3() {
 	}
 	m := f.(map[string]interface{})
 	for k, v := range m {
-		switch vv := v.type() {
+		switch vv := v.(type) {
 		case string:
-			fmt.Println(k,"是字符串",vv)
-		case int :
-			fmt.Println(k,"是int",vv)
+			fmt.Println(k, "是字符串", vv)
+		case int:
+			fmt.Println(k, "是int", vv)
 		case float64:
-			fmt.Println(k,"是浮点数",vv)
+			fmt.Println(k, "是浮点数", vv)
 		case []interface{}:
-			fmt.Println(k,"是数组")
-			for i, u := range vv{
-				fmt.Println(i,u)
+			fmt.Println(k, "是数组")
+			for i, u := range vv {
+				fmt.Println(i, u)
 			}
 		default:
-			fmt.Println(k,"一个未知类型")
+			fmt.Println(k, "一个未知类型")
 		}
-		
+
 	}
 }
+
 func main() {
 	jsondef2()
 }
