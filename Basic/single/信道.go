@@ -412,3 +412,4 @@ func stateTest() {
 func main() {
 	huchiTest()
 }
+//bjb
