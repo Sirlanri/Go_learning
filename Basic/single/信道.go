@@ -430,7 +430,7 @@ func stateTest() {
 	fmt.Println("写入次数：", writeOpsFinal)
 
 }
-func main() {
+func test3() {
 	stateTest()
 }
 
