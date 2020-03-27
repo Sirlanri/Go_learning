@@ -35,13 +35,15 @@ type Bylength []string
 func (a Bylength) Len() int      { return len(a) }
 func (a Bylength) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
 func (a Bylength) Less(i, j int) bool {
-	return len(a[i] < len(s[j]))
+	return len(a[i]) < len(a[j])
 }
 
 func sortMyTest() {
-
+	text := []string{"one", "second", "them"}
+	sort.Sort(Bylength(text))
+	fmt.Println(text)
 }
 
 func main() {
-	sortTest()
+	sortMyTest()
 }
