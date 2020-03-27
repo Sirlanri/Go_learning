@@ -405,11 +405,33 @@ func stateTest() {
 		}()
 	}
 
-	//用相同方法启动10个写操作,同步测试 2 先学概率论吧
-
+	//用相同方法启动10个写操作
+	for w := 0; w < 10; w++ {
+		go func() {
+			for {
+				write := &writeOp{
+					key:   rand.Intn(5),
+					value: rand.Intn(100),
+					resp:  make(chan bool),
+				}
+				writes <- write
+				<-write.resp
+				atomic.AddUint64(&writeops, 1)
+				time.Sleep(time.Millisecond)
+			}
+		}()
+	}
+	//跑1s
+	time.Sleep(time.Second)
+	//获取并报告ops值
+	readOpsFinal := atomic.LoadUint64(&readops)
+	fmt.Println("read ops 次数为 ", readOpsFinal)
+	writeOpsFinal := atomic.LoadUint64(&writeops)
+	fmt.Println("写入次数：", writeOpsFinal)
 
 }
 func main() {
-	huchiTest()
+	stateTest()
 }
+
 //bjb 再试试 PC
