@@ -44,6 +44,38 @@ func sortMyTest() {
 	fmt.Println(text)
 }
 
+//组合函数练习
+//Index返回t出现的第一个位置，没有返回-1
+func Index(vs []string, t string) int {
+	for i, v := range vs {
+		if v == t {
+			return i
+		}
+	}
+	return -1
+}
+
+//Include 如果存在，就返回true
+func Include(vs []string, t string) bool {
+	return Index(vs, t) >= 0
+}
+
+//Any 有一个满足，就返回true
+func Any(vs []string, f func(string) bool) bool {
+	for _, v := range vs {
+		//f就是引用的func
+		if f(v) {
+			return true
+		}
+	}
+	return false
+}
+
+//返回一个包含所有切片中满足条件f的字符串新切片
+func Filter(vs string, f func(string) bool) []string {
+
+}
+
 func main() {
 	sortMyTest()
 }
