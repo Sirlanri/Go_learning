@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"regexp"
 	"sort"
 	"strings"
 )
@@ -100,6 +101,18 @@ func collectionTest() {
 	fmt.Println(Filter(strs, func(v string) bool {
 		return strings.Contains(v, "e")
 	}))
+}
+
+//正则表达式
+func zhengzeTest() {
+	//直接使用，是否符合表达式
+	match1, _ := regexp.MatchString("p([a-z])ch", "peaaach")
+	fmt.Println(match1)
+	//预编译（Python里不建议这样使用
+	r, _ := regexp.Compile("p([a-z]+)ch")
+	fmt.Println(r.MatchString("peaaach"))
+	fmt.Println(r.FindString("peaonech peatwoch"))
+
 }
 
 func main() {
