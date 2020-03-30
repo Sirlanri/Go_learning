@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 	"time"
 
 	"math/rand"
@@ -182,6 +183,13 @@ func randomTest() {
 	fmt.Println(rand.Intn(100))
 	fmt.Println(rand.Intn(100))
 }
+
+//解析数字
+func getnumTest()  {
+	f,_ := strconv.ParseFloat("3.1415926",64)
+	fmt.Println(f)
+	int1,_ := strconv.ParseInt("12345",0,64)	//第二个表示几进制，0表示自动
+}
 func main() {
-	randomTest()
+	getnumTest()
 }
