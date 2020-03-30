@@ -3,6 +3,9 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"time"
+
+	"math/rand"
 	"os"
 	"regexp"
 	"sort"
@@ -161,6 +164,24 @@ func json1Test() {
 	d := map[string]int{"one": 1, "two": 2}
 	enc.Encode(d)
 }
+
+//随机数，测试的时候经常用到
+func randomTest() {
+	//返回一个0.0<=f<1.0的数
+	fmt.Println(rand.Float64() * 10)
+	for i := 0; i < 10; i++ {
+		fmt.Println(rand.Float64())
+	}
+
+	//随机种子
+	//教程说，如果不随机种子，会产生一样的随机数，可是这边很正常啊
+	seed1 := rand.NewSource(time.Now().UnixNano())
+	res1 := rand.New(seed1)
+	fmt.Println("随机种子", res1.Intn(100))
+	fmt.Println(rand.Intn(100))
+	fmt.Println(rand.Intn(100))
+	fmt.Println(rand.Intn(100))
+}
 func main() {
-	json1Test()
+	randomTest()
 }
