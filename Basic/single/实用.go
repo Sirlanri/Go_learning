@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 	"regexp"
 	"sort"
 	"strings"
@@ -75,23 +76,7 @@ func Any(vs []string, f func(string) bool) bool {
 }
 
 //Filter 返回一个包含所有切片中满足条件f的字符串新切片
-func Filter(vs string, f func(string) bool) []string {
-	for _, v := range vs {
-		if !f(v) {
-			return false
-		}
-	}
-	return true
-}
 
-//Map 返回一个对原始切片中所有字符串执行函数f后的新切片
-func Map(vs []string, f func(string) bool) []string {
-	vsm := make([]string, len(vs))
-	for i, v := range vs {
-		vsm[i] = f(v)
-	}
-	return vsm
-}
 func collectionTest() {
 	strs := []string{"peach", "apple", "pear", "plum"} //最后这个梅子我竟然不认识
 	fmt.Println(Index(strs, "pear"))
@@ -99,9 +84,7 @@ func collectionTest() {
 	fmt.Println(Any(strs, func(v string) bool {
 		return strings.HasPrefix(v, "p")
 	}))
-	fmt.Println(Filter(strs, func(v string) bool {
-		return strings.Contains(v, "e")
-	}))
+
 }
 
 //正则表达式
@@ -121,8 +104,6 @@ type Response1 struct {
 	Page   int
 	Fruits []string
 }
-
-//两个结构体
 type Response2 struct {
 	Page   int      `json:"page"`
 	Fruits []string `json:"fruits"`
@@ -142,9 +123,44 @@ func json1Test() {
 	slinceD := []string{"apple", "peach", "pear"}
 	slinceB, _ := json.Marshal(slinceD)
 	fmt.Println(string(slinceB))
-	mapD := map[int]string{1: ""}
 
+	mapD := map[int]string{1: "fisrt", 2: "second", 3: "third"}
+	mapB, _ := json.Marshal(mapD)
+	fmt.Println(string(mapB))
+
+	res1D := &Response1{
+		Page:   1,
+		Fruits: []string{"apple", "peach", "pear"}}
+	res1B, _ := json.Marshal(res1D)
+	fmt.Println(string(res1B))
+
+	byt := []byte(`{"num":6.13,"strs":["a","b"]}`)
+	var data map[string]interface{}
+	//实际解码和错误检查
+	if err := json.Unmarshal(byt, &data); err != nil {
+		panic(err)
+	}
+	fmt.Println(data)
+	//将num转化为float64
+	num2 := data["num"].(float64)
+	fmt.Println(num2)
+	//访问嵌套的值
+	strs := data["strs"].([]interface{})
+	str1 := strs[0].(string)
+	fmt.Println(str1)
+
+	//把json解析到结构体，这样方便多了~
+	str2 := `{"page": 1, "fruits": ["apple", "peach"]}`
+	res := &Response2{}
+	json.Unmarshal([]byte(str2), &res)
+	fmt.Println(res)
+	fmt.Println(res.Fruits[0])
+
+	//使用OS，可以作为http相应体
+	enc := json.NewEncoder(os.Stdout)
+	d := map[string]int{"one": 1, "two": 2}
+	enc.Encode(d)
 }
 func main() {
-	sortMyTest()
+	json1Test()
 }
