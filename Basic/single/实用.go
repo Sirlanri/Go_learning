@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"regexp"
 	"sort"
@@ -115,6 +116,35 @@ func zhengzeTest() {
 
 }
 
+//json解析
+type Response1 struct {
+	Page   int
+	Fruits []string
+}
+
+//两个结构体
+type Response2 struct {
+	Page   int      `json:"page"`
+	Fruits []string `json:"fruits"`
+}
+
+func json1Test() {
+	bolB, _ := json.Marshal(true)
+	fmt.Println(string(bolB))
+
+	intB, _ := json.Marshal(1)
+	fmt.Println(string(intB))
+
+	fltB, _ := json.Marshal(2.34)
+	fmt.Println(string(fltB))
+
+	//切片和map编码
+	slinceD := []string{"apple", "peach", "pear"}
+	slinceB, _ := json.Marshal(slinceD)
+	fmt.Println(string(slinceB))
+	mapD := map[int]string{1: ""}
+
+}
 func main() {
 	sortMyTest()
 }
