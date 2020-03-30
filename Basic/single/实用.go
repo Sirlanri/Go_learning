@@ -189,7 +189,8 @@ func getnumTest()  {
 	f,_ := strconv.ParseFloat("3.1415926",64)
 	fmt.Println(f)
 	int1,_ := strconv.ParseInt("12345",0,64)	//第二个表示几进制，0表示自动
+	fmt.Println(int1)
 }
-func main() {
+func test4() {
 	getnumTest()
 }
