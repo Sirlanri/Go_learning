@@ -53,8 +53,8 @@ func readTest() {
 }
 
 func writeTest() {
-	test2 := []byte{"WDNMD第一行"}
-	err := ioutil.WriteFile("data/text2.text", test2)
+	test2 := []byte("wdnmd写入")
+	err := ioutil.WriteFile("data/text2.text", test2, 0644)
 	if err != nil {
 		println(err)
 	}
@@ -65,7 +65,7 @@ func writeTest() {
 		println(err)
 	}
 	defer file2.Close()
-	intarr := [5]int{1, 2, 3, 4, 5}
+	intarr := []byte{1, 2, 3, 4, 5} //字节切片
 	lenint, err := file2.Write(intarr)
 	if err != nil {
 		println(err)
@@ -77,5 +77,5 @@ func writeTest() {
 }
 
 func main() {
-	readTest()
+	writeTest()
 }
