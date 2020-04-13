@@ -335,3 +335,251 @@ WHERE EXISTS
     (SELECT *
     FROM SC
     WHERE Sno=Student.Sno AND Cno= '1');
+
+/*查询与“刘晨”在同一个系学习的学生*/
+SELECT Sno,Sname,Sdept
+FROM Student S1
+WHERE EXISTS
+    (SELECT *
+    FROM Student S2
+    WHERE S2.Sdept = S1.Sdept AND
+    S2.Sname = '刘晨');
+
+/*查询选修了全部课程的学生姓名*/
+SELECT Sname
+FROM Student
+WHERE NOT EXISTS
+    (SELECT *
+    FROM Course
+    WHERE NOT EXISTS
+        (SELECT *
+        FROM SC
+        WHERE Sno= Student.Sno
+        AND Cno= Course.Cno
+        )
+    );
+
+/*查询计算机科学系的学生及年龄不大于19岁的学生*/
+SELECT *
+FROM Student
+WHERE Sdept= 'CS'
+UNION
+SELECT *
+FROM Student
+WHERE Sage<=19;
+
+/*查询选修了课程1或者选修了课程2的学生。*/
+SELECT Sno
+FROM SC
+WHERE Cno=' 1 '
+UNION
+SELECT Sno
+FROM SC
+WHERE Cno= ' 2 ';
+
+/*查询计算机科学系的学生与年龄不大于19岁的学生的交集。*/
+(SELECT *
+FROM Student
+WHERE Sdept='CS')
+INTERSECT
+(SELECT *
+FROM Student
+WHERE Sage<=19);
+
+/*换一种写法*/
+SELECT *
+FROM Student
+WHERE Sdept= 'CS' AND Sage<=19;
+
+/*查询既选修了课程1又选修了课程2的学生。*/
+SELECT Sno
+FROM SC
+WHERE Cno='1'
+INTERSECT
+SELECT Sno
+FROM SC
+WHERE Cno='2';
+
+/*查询计算机科学系的学生与年龄不大于19岁的学生的差集。*/
+SELECT *
+FROM Student
+WHERE Sdept='CS'
+EXCEPT
+SELECT *
+FROM Student
+WHERE Sage <=19;
+
+/*查询所有选修了1号课程的学生姓名*/
+SELECT Sname
+FROM Student,
+(SELECT Sno FROM SC WHERE Cno=' 1 ') AS SC1
+WHERE Student.Sno=SC1.Sno;
+
+
+
+ 
+ALTER TABLE student DROP INDEX ssex;
+/*将一个新学生元组（学号：201215128;姓名：陈冬;性别：男;所在系：IS;年龄：18岁）插入到Student表中。*/
+INSERT
+INTO Student (Sno,Sname,ssex,Sdept,Sage)
+VALUES ('201215128','陈冬','男','IS',18);
+
+/*插入一条选课记录*/
+INSERT
+INTO SC
+VALUES (' 201215128 ',' 1 ',NULL);
+
+/*将学生张成民的信息插入到Student表*/
+INSERT
+INTO Student
+VALUES ('201215126','张成民','男',18,'CS');
+
+/*对每一个系，求学生的平均年龄*/
+CREATE TABLE Dept_age
+( Sdept CHAR(15), /*系名*/
+Avg_age SMALLINT); /*学生平均年龄*/
+/*插入数据*/
+INSERT
+INTO Dept_age(Sdept,Avg_age)
+SELECT Sdept，AVG(Sage)
+FROM Student
+GROUP BY Sdept;
+
+/*将学生201215121的年龄改为22岁*/
+UPDATE Student
+SET Sage=22
+WHERE Sno=' 201215121 ';
+
+/*将所有学生的年龄增加1岁。*/
+UPDATE Student
+SET Sage= Sage+1;
+
+/*将计算机科学系全体学生的成绩置零。*/
+UPDATE SC
+SET Grade=0
+WHERE Sno IN
+(select Sno
+FROM Student
+WHERE Sdept= 'CS' );
+
+/*删除学号为201215128的学生记录。*/
+DELETE
+FROM Student
+WHERE Sno= '201215128';
+
+/*删除所有的学生选课记录。*/
+DELETE
+FROM SC;
+
+/*删除计算机科学系所有学生的选课记录*/
+DELETE
+FROM SC
+WHERE Sno IN
+(select Sno
+FROM Student
+WHERE Sdept= 'CS') ;
+
+/*向SC表中插入一个元组*/
+INSERT INTO SC(Sno,Cno,Grade)
+VALUES('201215126 ','1',NULL); /*该学生还没有考试成绩，取空值*/
+
+INSERT INTO SC(Sno,Cno)
+VALUES(' 201215126 ','1'); /*没有赋值的属性，其值为空值*/
+
+/*将Student表中学生号为”201215200”的学生所属的系改为空值。*/
+UPDATE Student
+SET Sdept = NULL
+WHERE Sno='201215200';
+
+/*从Student表中找出漏填了数据的学生信息*/
+SELECT *
+FROM Student
+WHERE Sname IS NULL OR Ssex IS NULL OR Sage IS NULL OR Sdept IS NULL;
+
+/*找出选修1号课程的不及格的学生。*/
+SELECT Sno
+FROM SC
+WHERE Grade < 60 AND Cno='1';
+
+/*选出选修1号课程的不及格的学生以及缺考的学生。*/
+SELECT Sno
+FROM SC
+WHERE Grade < 60 AND Cno='1'
+UNION
+SELECT Sno
+FROM SC
+WHERE Grade IS NULL AND Cno='1'
+
+SELECT Sno
+FROM SC
+WHERE Cno='1' AND (Grade<60 OR Grade IS NULL);
+
+/*建立信息系学生的视图。*/
+CREATE VIEW IS_Student
+AS
+SELECT Sno,Sname,Sage
+FROM Student
+WHERE Sdept= 'IS'
+WITH CHECK OPTION;
+
+/*建立信息系选修了1号课程的学生的视图*/
+CREATE VIEW IS_S1(Sno,Sname,Grade)
+AS
+SELECT Student.Sno,Sname,Grade
+FROM Student,SC
+WHERE Sdept= 'IS' AND
+Student.Sno=SC.Sno AND
+SC.Cno= '1';
+
+/*建立信息系选修了1号课程且成绩在90分以上的学生的视图。*/
+CREATE VIEW IS_S2
+AS
+SELECT Sno,Sname,Grade
+FROM IS_S1
+WHERE Grade>=90;
+
+/*定义一个反映学生出生年份的视图*/
+CREATE VIEW BT_S(Sno,Sname,Sbirth)
+AS
+SELECT Sno,Sname,2014-Sage
+FROM Student;
+
+/*将学生的学号及平均成绩定义为一个视图*/
+create VIEW S_G(Sno,Gavg)
+AS
+SELECT Sno,AVG(Grade)
+FROM SC
+GROUP BY Sno;
+
+/*将Student表中所有女生记录定义为一个视图*/
+CREATE VIEW F_Student(F_Sno,name,sex,age,dept)
+AS
+SELECT * /*没有不指定属性列*/
+FROM Student
+WHERE Ssex='女';
+
+/*在信息系学生的视图中找出年龄小于20岁的学生*/
+SELECT Sno,Sage
+FROM IS_Student
+WHERE Sage<20;
+
+/*查询选修了1号课程的信息系学生*/
+SELECT IS_Student.Sno,Sname
+FROM IS_Student,SC
+WHERE IS_Student.Sno =SC.Sno AND SC.Cno= '1';
+
+/*将信息系学生视图IS_Student中学号”201215122”的学生姓名改为”刘辰”。*/
+UPDATE IS_Student
+SET Sname= '刘辰'
+WHERE Sno= ' 201215122 ';
+
+/*向信息系学生视图IS_S中插入一个新的学生记录，*/
+INSERT
+INTO IS_Student
+VALUES('201215129','赵新',20);
+
+/*删除信息系学生视图*/
+DELETE
+FROM IS_Student
+WHERE Sno= ' 201215129 ';
+
