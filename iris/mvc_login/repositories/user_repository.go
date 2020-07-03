@@ -20,7 +20,7 @@ type UserRepository interface {
 }
 
 //NewUserRepository 返回一个新的基于用户内存的存储库
-func NewUserRepository(source map[int64]datamodels.User) UserRepository {
+func NewUserRepository(source map[int64]datamodels.User) *userRepository {
 	return &userRepository{source: source}
 }
 
@@ -73,7 +73,7 @@ func (r *userRepository) Select(query Query) (user datamodels.User, found bool) 
 }
 
 //SelectMany 返回一堆datamodels.User，如果limit<0,就返回全部
-func (r *userRepository) SeleteMany(query Query, limit int) (result []datamodels.User) {
+func (r *userRepository) SelectMany(query Query, limit int) (result []datamodels.User) {
 	r.Exec(query, func(m datamodels.User) bool {
 		result = append(result, m)
 		return true
