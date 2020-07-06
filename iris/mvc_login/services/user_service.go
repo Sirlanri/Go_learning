@@ -19,8 +19,8 @@ type UserService interface {
 }
 
 //NewUserService 返回默认用户服务
-func NewUserService(repo repositories.UserRepository) UserService {
-	return &userService{
+func NewUserService(repo repositories.UserRepository) userService {
+	return userService{
 		repo: repo,
 	}
 }
@@ -31,9 +31,10 @@ type userService struct {
 
 //GetAll 返回全部用户
 func (s *userService) GetAll() []datamodels.User {
-	return s.repo.SelectMany(func(_ datamodels.User) bool {
+	result, _ := s.repo.SelectMany(func(_ datamodels.User) bool {
 		return true
 	}, -1)
+	return result
 }
 
 //GetByID 根据ID返回用户

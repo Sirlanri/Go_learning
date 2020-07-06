@@ -8,7 +8,6 @@ import (
 	"github.com/kataras/iris/v12/mvc"
 	"github.com/kataras/iris/v12/sessions"
 )
-)
 
 // UserController 是我们的/用户控制器。
 // UserController 负责处理以下请求：
@@ -48,40 +47,40 @@ func (c *UserController) logout() {
 }
 
 var registerStaticView = mvc.View{
-	Name:"user/register.html",
-	Data: iris.Map{"title":"User Registration"},
+	Name: "user/register.html",
+	Data: iris.Map{"title": "User Registration"},
 }
 
 // GetRegister 处理 GET: http://localhost:8080/user/register.
-func (c *UserController) GetRegister() mvc.Result{
+func (c *UserController) GetRegister() mvc.Result {
 	//从表单中获取名字，用户名，密码
 	var (
 		firstname = c.Ctx.FormValue("firstname")
-		username = c.Ctx.FormValue("username")
-		password = c.Ctx.FormValue("password")
+		username  = c.Ctx.FormValue("username")
+		password  = c.Ctx.FormValue("password")
 	)
 	//创建新用户，密码哈希处理
-	u, err := c.Service.Create(password,datamodels.User{
-		Username: username,
+	u, err := c.Service.Create(password, datamodels.User{
+		Username:  username,
 		Firstname: firstname,
 	})
 	//讲用户的ID设置为此会话
-	c.Session.Set(userIDKey,u.ID)
+	c.Session.Set(userIDKey, u.ID)
 	return mvc.Response{
 		//如果不是nil，就显示错误
-		Err: err,
+		Err:  err,
 		Path: "/user/me",
 		Code: 303,
 	}
 }
 
-var loginStaticView=mvc.View{
+var loginStaticView = mvc.View{
 	Name: "user/login.html",
-	Data: iris.Map{"title":"User Login"},
+	Data: iris.Map{"title": "User Login"},
 }
 
 //GetLogin GET: http://localhost:8080/user/login
-func (c *UserController) GetLogin() mvc.Result{
+func (c *UserController) GetLogin() mvc.Result {
 	if c.isLoggedIn() {
 		//如果已经登录了，就删除旧session
 		c.loginout()
@@ -90,30 +89,30 @@ func (c *UserController) GetLogin() mvc.Result{
 }
 
 // PostLogin 处理POST: http://localhost:8080/user/register
-func (c *UserController) PostLogin() mvc.Result{
+func (c *UserController) PostLogin() mvc.Result {
 	var (
 		username = c.Ctx.FormValue("username")
 		password = c.Ctx.FormValue("password")
 	)
-	u,found := c.Service.GetByUserNameAndPassword(username,password)
+	u, found := c.Service.GetByUserNameAndPassword(username, password)
 	if !found {
 		return mvc.Response{
 			Path: "/user/register",
 		}
 	}
-	c.Session.Set(userIDKey,u.ID)
+	c.Session.Set(userIDKey, u.ID)
 	return mvc.Response{
 		Path: "/user/me",
 	}
 }
 
 //GetMe 处理 GET: http://localhost:8080/user/me
-func (c *UserController) GetMe() mvc.Result{
+func (c *UserController) GetMe() mvc.Result {
 	if !c.isLoggedIn() {
 		//没登录，就重定向到登录页面
 		return mvc.Response{Path: "/user/login"}
 	}
-	u,found := c.Service.GetByID(c.getCurrentUserID())
+	u, found := c.Service.GetByID(c.getCurrentUserID())
 	if !found {
 		//如果session存在，但用户不在数据库中，注销
 		c.logout()
@@ -122,16 +121,16 @@ func (c *UserController) GetMe() mvc.Result{
 	return mvc.View{
 		Name: "user/me.html",
 		Data: iris.Map{
-			"title":"资料是"+u.Username,
-			"User":u,
+			"title": "资料是" + u.Username,
+			"User":  u,
 		},
 	}
 }
+
 // AnyLogout 处理 All/AnyHTTP 方法：http://localhost:8080/user/logout
-func (c *UserController) AnyLogout(){
+func (c *UserController) AnyLogout() {
 	if c.isLoggedIn() {
 		c.logout()
 	}
 	c.Ctx.Redirect()
 }
-
